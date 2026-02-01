@@ -1,156 +1,312 @@
 <!doctype html>
-
 <html lang="hu">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Videó-stílusú sablon — kattintásra felugró reklám</title>
+  <title>Videó lejátszó</title>
+
   <style>
-    :root{ --bg:#0f1724; --card:#0b1220; --accent:#10b981; --glass: rgba(255,255,255,0.04);} 
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#071022 0%, #0f1b2a 100%);color:#e6eef6}
-    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:2rem}
-    .player-card{width:100%;max-width:960px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:1rem;box-shadow:0 10px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
-    .media{position:relative;padding-top:56.25%;border-radius:8px;overflow:hidden;background:#000}
-    .media iframe, .media video{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
-    .meta{margin-top:12px;display:flex;align-items:center;justify-content:space-between}
-    .title{font-size:1.05rem;font-weight:600}
-    .hint{font-size:0.85rem;opacity:0.75}/* Ad modal */
-.ad-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.65);z-index:9999;backdrop-filter:blur(4px);}
-.ad-card{width:90%;max-width:640px;background:var(--card);border-radius:10px;padding:1rem;border:1px solid rgba(255,255,255,0.04);box-shadow:0 12px 40px rgba(2,6,23,0.7)}
-.ad-media{height:320px;border-radius:8px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center}
-.ad-media img{max-width:100%;max-height:100%;display:block}
-.ad-footer{display:flex;gap:8px;align-items:center;margin-top:10px}
-.btn{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px;color:inherit;cursor:pointer}
-.btn.primary{background:var(--accent);color:#062018;border:0}
+    :root{
+      --bg:#0f0f10;
+      --card:#1a1b1e;
+      --muted:#9aa0a6;
+      --text:#f1f3f4;
+      --accent:#ff2d55;
+      --btn:#2b8cff;
+      --btn2:#18c37e;
+      --border:rgba(255,255,255,.08);
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
 
-/* small helpers */
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    header{
+      position:sticky; top:0;
+      z-index:10;
+      background:#15161a;
+      border-bottom:1px solid var(--border);
+    }
+    .topbar{
+      max-width:900px;
+      margin:0 auto;
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .burger{
+      width:40px;height:40px;border-radius:12px;
+      display:grid;place-items:center;
+      border:1px solid var(--border);
+      background:transparent;color:var(--text);
+      font-size:18px;
+    }
+    .logo{
+      flex:1;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800;
+      letter-spacing:.5px;
+      color:#fff;
+    }
+    .logo span{
+      background:var(--accent);
+      padding:6px 14px;
+      border-radius:999px;
+      box-shadow:var(--shadow);
+    }
+    .login{
+      border:1px solid var(--border);
+      background:transparent;
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:700;
+    }
 
-@media (max-width:520px){.ad-media{height:200px}}
+    main{
+      max-width:900px;
+      margin:0 auto;
+      padding:16px 14px 60px;
+      display:grid;
+      gap:14px;
+    }
 
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .video-wrap{
+      padding:12px;
+    }
+
+    video{
+      width:100%;
+      height:auto;
+      border-radius:16px;
+      background:#000;
+      outline:none;
+    }
+
+    .meta{
+      padding:12px 14px 14px;
+      border-top:1px solid var(--border);
+      display:grid;
+      gap:10px;
+    }
+
+    .channel{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      font-weight:600;
+      font-size:14px;
+    }
+    .title{
+      font-size:18px;
+      font-weight:800;
+      line-height:1.25;
+      margin:0;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:6px;
+    }
+
+    .btn{
+      border:none;
+      padding:12px 14px;
+      border-radius:14px;
+      font-weight:800;
+      cursor:pointer;
+      color:#fff;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      user-select:none;
+    }
+    .btn.download{ background:var(--btn2); }
+    .btn.ad{ background:var(--btn); }
+    .btn:active{ transform:translateY(1px); }
+
+    .ad-card{
+      padding:14px;
+      display:grid;
+      gap:10px;
+    }
+    .ad-title{
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .ad-note{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* Reklám overlay */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:9999;
+    }
+    .overlay.show{ display:flex; }
+    .modal{
+      width:min(720px, 100%);
+      background:#121318;
+      border:1px solid var(--border);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+    }
+    .modal-head{
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--border);
+    }
+    .modal-head b{ font-size:14px; }
+    .close{
+      border:1px solid var(--border);
+      background:transparent;
+      color:var(--text);
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .modal-body{
+      padding:12px;
+    }
+    .ad-slot{
+      min-height:280px;
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,.18);
+      display:grid;
+      place-items:center;
+      color:var(--muted);
+      text-align:center;
+      padding:18px;
+    }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="player-card">
-      <div class="media" id="media">
-        <!-- A videó/iframe ide töltődik be a scriptből -->
-      </div>
-      <div class="meta">
-        <div>
-          <div class="title">Példa videó — középre illesztve</div>
-          <div class="hint">Minden kattintásra megjelenik egy reklám (bezáráshoz nyomd meg az × -et vagy az Esc-et)</div>
-        </div>
-        <div>
-          <button class="btn no-ad" id="toggleInfo">Info</button>
-        </div>
+<header>
+  <div class="topbar">
+    <button class="burger" aria-label="Menü">☰</button>
+    <div class="logo"><span>ggg</span></div>
+    <button class="login">BELÉPÉS</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- VIDEÓ KÁRTYA -->
+  <section class="card">
+    <div class="video-wrap">
+      <video id="player" controls playsinline preload="metadata">
+        <!-- KÖZVETLEN VIDEÓ LINK (Dropbox usercontent) -->
+        <source id="videoSource"
+                src="https://dl.dropboxusercontent.com/scl/fi/uecgt6mva6l51or9ovqft/video.mp4?rlkey=qbmtoecx4s7fjc2ozj8r96hv0&st=keld91um"
+                type="video/mp4">
+        A böngésződ nem támogatja a videó lejátszást.
+      </video>
+    </div>
+
+    <div class="meta">
+      <div class="channel">Videó • <span id="views">0</span> megtekintés</div>
+      <h1 class="title" id="videoTitle">Videó címe</h1>
+
+      <div class="actions">
+        <!-- LETÖLTÉS GOMB (ugyanaz a közvetlen link) -->
+        <a id="downloadBtn"
+           class="btn download"
+           href="https://dl.dropboxusercontent.com/scl/fi/uecgt6mva6l51or9ovqft/video.mp4?rlkey=qbmtoecx4s7fjc2ozj8r96hv0&st=keld91um"
+           download>
+          ⬇️ Letöltés (MP4)
+        </a>
+
+        <button class="btn ad" id="showAdBtn">
+          📢 Reklám megjelenítése
+        </button>
       </div>
     </div>
-  </div>  <!-- Ad modal (dinamikusan megjelenik) -->  <template id="adTemplate">
-    <div class="ad-modal" id="adModal" role="dialog" aria-modal="true">
-      <div class="ad-card">
-        <div style="display:flex;justify-content:flex-end"><button class="btn no-ad" id="closeAd" aria-label="Bezárás">×</button></div>
-        <div class="ad-media" id="adMedia">
-          <!-- reklám képe/iframe ide jön -->
-        </div>
-        <div class="ad-footer">
-          <a id="adLink" class="btn primary" target="_blank" rel="noopener">Megnyitás</a>
-          <button class="btn no-ad" id="dismiss">Bezárás</button>
-          <div style="flex:1"></div>
-        </div>
+  </section>
+
+  <!-- HIRDETÉS BLOKK -->
+  <section class="card ad-card">
+    <div class="ad-title">Hirdetés</div>
+    <div class="ad-note">
+      Ide illeszd a reklámkódot (script/iframe).
+    </div>
+
+    <div id="inlineAd" class="ad-slot">
+      <!-- IDE ILLESZD A REKLÁM KÓDOT -->
+      Hirdetés helye
+    </div>
+  </section>
+
+</main>
+
+<!-- REKLÁM OVERLAY -->
+<div id="overlay" class="overlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <b>Hirdetés</b>
+      <button class="close" id="closeAd">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="overlayAd" class="ad-slot">
+
+        <script src="https://pl28566218.effectivegatecpm.com/a0/43/e3/a043e350c28e267428053c9ac9bc1f76.js"></script>
+
       </div>
     </div>
-  </template>  <script>
-    /*************************************************************************
-     * KONFIGURÁCIÓ: ide másold be a saját videód linkjét
-     * - Ha YouTube/Vimeo embed link: állítsd videoType: 'embed' és videoSrc-ot
-     *   pl. 'https://www.youtube.com/embed/VIDEO_ID'
-     * - Ha közvetlen mp4 fájlod van: állítsd videoType: 'mp4' és videoSrc-ot
-     * ************************************************************************/ 
-    const CONFIG = {
-      videoType: 'embed', // 'embed' vagy 'mp4'
-      // YouTube példa: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-      // MP4 példa: '/videos/myfile.mp4'
-      videoSrc: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  </div>
+</div>
 
-      // Reklámok minták — kép + cél URL. Tetszőlegesen cserélheted.
-      ads: [
-        { img: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450"><rect width="100%" height="100%" fill="%2301a3a4"/><text x="50%" y="50%" font-size="30" text-anchor="middle" fill="white" dy=".3em">Reklám helye 1</text></svg>', url: 'https://example.com' },
-        { img: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450"><rect width="100%" height="100%" fill="%23ff7a59"/><text x="50%" y="50%" font-size="30" text-anchor="middle" fill="white" dy=".3em">Reklám helye 2</text></svg>', url: 'https://example.org' }
-      ],
+<script>
+  document.getElementById("videoTitle").textContent = "Videó címe ide";
 
-      // Milyen hosszú ideig maradjon alapból nyitva (ms). 0 = nem automatikus zárás.
-      adAutoCloseMs: 0
-    }
+  const overlay = document.getElementById("overlay");
+  document.getElementById("showAdBtn").addEventListener("click", () => {
+    overlay.classList.add("show");
+  });
+  document.getElementById("closeAd").addEventListener("click", () => {
+    overlay.classList.remove("show");
+  });
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) overlay.classList.remove("show");
+  });
 
-    // Betölti a videót a #media elembe
-    function loadVideo(){
-      const media = document.getElementById('media')
-      if(CONFIG.videoType === 'mp4'){
-        media.innerHTML = `<video controls playsinline preload="metadata" class="no-ad">
-          <source src="${CONFIG.videoSrc}" type="video/mp4">
-          A böngésződ nem támogatja a <code>video</code> elemet.
-        </video>`
-      } else {
-        // embed iframe (YouTube/Vimeo stb.)
-        media.innerHTML = `<iframe class="no-ad" src="${CONFIG.videoSrc}" title="Videó" frameborder="0" allowfullscreen allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"></iframe>`
-      }
-    }
+  const player = document.getElementById("player");
+  let adShownOnce = false;
+  player.addEventListener("play", () => {
+    if (adShownOnce) return;
+    adShownOnce = true;
+    overlay.classList.add("show");
+  });
+</script>
 
-    // Reklám megjelenítése modalban
-    let adOpen = false
-    function showAd(){
-      if(adOpen) return
-      adOpen = true
-
-      const tpl = document.getElementById('adTemplate')
-      const clone = tpl.content.cloneNode(true)
-      document.body.appendChild(clone)
-
-      const adModal = document.getElementById('adModal')
-      const adMedia = document.getElementById('adMedia')
-      const adLink = document.getElementById('adLink')
-      const closeBtn = document.getElementById('closeAd')
-      const dismiss = document.getElementById('dismiss')
-
-      // Véletlenszerű reklám kiválasztása
-      const ad = CONFIG.ads[Math.floor(Math.random()*CONFIG.ads.length)]
-      adMedia.innerHTML = `<img src="${ad.img}" alt="Reklám" />`
-      adLink.href = ad.url
-      adLink.textContent = 'Megnyitás'
-
-      function closeAd(){
-        const node = document.getElementById('adModal')
-        if(node) node.remove()
-        adOpen = false
-        document.removeEventListener('keydown', onKey)
-      }
-
-      closeBtn.addEventListener('click', function(e){ e.stopPropagation(); closeAd() })
-      dismiss.addEventListener('click', function(e){ e.stopPropagation(); closeAd() })
-
-      // Ha a felhasználó a reklám linkjére kattint, nyisson új ablakot és zárja a modalt
-      adLink.addEventListener('click', function(){ closeAd() })
-
-      function onKey(e){ if(e.key === 'Escape'){ closeAd() } }
-      document.addEventListener('keydown', onKey)
-
-      if(CONFIG.adAutoCloseMs > 0){ setTimeout(closeAd, CONFIG.adAutoCloseMs) }
-    }
-
-    // Ha a felhasználó bárhol kattint (kivéve azokra az elemekre, amikre nem akarunk reklámot), megjelenik a reklám
-    document.addEventListener('click', function(e){
-      // ha az elem vagy egy őse rendelkezik .no-ad osztállyal, akkor ne jelenjen meg reklám
-      if(e.target.closest('.no-ad')) return
-      showAd()
-    })
-
-    // Betöltés
-    loadVideo()
-
-    // Small UX: info gomb mutatja a konfiguráció helyét (nem nyit reklámot)
-    document.getElementById('toggleInfo').addEventListener('click', function(){
-      alert('A videót a CONFIG.videoSrc mezőbe kell bemásolni a HTML fájl tetején.\nYouTube-hoz használd az embed URL-t (pl. https://www.youtube.com/embed/VIDEO_ID).')
-    })
-  </script></body>
+</body>
 </html>
