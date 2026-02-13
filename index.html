@@ -4,376 +4,198 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Videó kereső + lejátszó</title>
+
   <style>
-    :root{
-      --bg:#0f0f10;
-      --card:#1a1b1e;
-      --muted:#9aa0a6;
-      --text:#f1f3f4;
-      --accent:#ff2d55;
-      --btn:#2b8cff;
-      --btn2:#18c37e;
-      --border:rgba(255,255,255,.08);
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
-      --radius:14px;
-      --maxw:920px;
-    }
     *{box-sizing:border-box}
     body{
       margin:0;
       min-height:100vh;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:linear-gradient(180deg,#0b0b0c 0%, #0f0f10 100%);
-      color:var(--text);
+      font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      background:#0f0f10;
+      color:#fff;
       display:flex;
-      align-items:center;
       justify-content:center;
-      padding:28px;
-    }
-    .wrap{
-      width:100%;
-      max-width:var(--maxw);
-      display:grid;
-      gap:18px;
-    }
-
-    /* Top bar */
-    .topbar{
-      display:flex;
       align-items:center;
-      gap:12px;
+      padding:24px;
     }
-    .logo{ font-weight:900; font-size:18px; }
+    .wrap{max-width:900px;width:100%}
+
     .logo span{
-      background:var(--accent);
-      padding:6px 12px;
+      background:#ff2d55;
+      padding:6px 14px;
       border-radius:999px;
-      box-shadow:var(--shadow);
+      font-weight:900;
     }
 
-    /* Card */
     .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .center{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:36px;
+      background:#1a1b1e;
+      border-radius:14px;
+      padding:24px;
+      margin-top:14px;
     }
 
-    /* Search area (főoldal) */
-    #homeView .searchBox{
-      max-width:720px;
-      width:100%;
-      display:grid;
-      gap:12px;
-      text-align:center;
-    }
     #searchInput{
       width:100%;
-      padding:14px 16px;
+      padding:14px;
       border-radius:12px;
-      border:1px solid var(--border);
-      background:#0f1012;
-      color:var(--text);
-      font-weight:700;
+      border:none;
       font-size:16px;
-      outline:none;
+      font-weight:700;
     }
-    #results{
-      margin:0;
-      padding:0;
-      list-style:none;
-      display:grid;
-      gap:8px;
-    }
-    .resultItem{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:10px 12px;
-      border-radius:12px;
-      background:#0d0d0e;
-      border:1px solid rgba(255,255,255,.03);
+
+    .result{
+      margin-top:10px;
+      padding:12px;
+      background:#111;
+      border-radius:10px;
       cursor:pointer;
+      font-weight:700;
     }
-    .resultItem b{ font-size:15px; }
-    .resultItem small{ color:var(--muted); font-weight:700; }
 
-    /* Player view */
-    #playerView{ display:none; gap:14px; }
-    .videoCard{ padding:12px; }
-    #videoContainer{ position:relative; width:100%; max-width:900px; margin:0 auto; border-radius:12px; overflow:hidden; background:#000; }
-    video{ width:100%; height:auto; display:block; background:#000; }
+    #playerView{display:none}
 
-    /* letöltés gomb (jobb felső sarok) */
+    #videoContainer{
+      position:relative;
+      background:#000;
+      border-radius:12px;
+      overflow:hidden;
+    }
+
+    video{width:100%;display:block}
+
     #downloadBtn{
       position:absolute;
-      top:12px;
-      right:12px;
+      top:10px;
+      right:10px;
+      background:rgba(0,0,0,.7);
       padding:8px 12px;
-      border-radius:10px;
-      background:rgba(0,0,0,0.6);
-      border:1px solid rgba(255,255,255,.06);
+      border-radius:8px;
       color:#fff;
-      font-weight:800;
       text-decoration:none;
+      font-weight:800;
       opacity:0;
-      visibility:hidden;
-      transition:opacity .12s ease, transform .12s;
-      z-index:40;
+      transition:.2s;
     }
-    /* hover-ra jelenik meg (asztali) */
-    #videoContainer:hover #downloadBtn{ opacity:1; visibility:visible; transform:translateY(0); }
 
-    /* érintőeszközökre: toggle osztályra jelenik meg */
-    #videoContainer.touch-visible #downloadBtn{ opacity:1; visibility:visible; }
-
-    .metaRow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:10px 12px;
+    #videoContainer:hover #downloadBtn,
+    #videoContainer.touch #downloadBtn{
+      opacity:1;
     }
-    .metaLeft b{ font-size:18px; }
-    .backBtn{
-      padding:8px 12px;
-      border-radius:10px;
-      background:transparent;
-      border:1px solid var(--border);
-      color:var(--text);
+
+    .back{
+      margin-bottom:10px;
       cursor:pointer;
       font-weight:800;
     }
 
-    /* overlay reklám/modal */
+    /* reklám */
     .overlay{
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,.72);
+      background:rgba(0,0,0,.7);
       display:none;
-      align-items:center;
       justify-content:center;
-      padding:18px;
+      align-items:center;
       z-index:9999;
     }
-    .overlay.show{ display:flex; }
-    .modal{
-      width:min(760px, 96%);
-      background:#121318;
-      border:1px solid var(--border);
-      border-radius:14px;
-      overflow:hidden;
-      box-shadow:var(--shadow);
-    }
-    .modal-head{ padding:10px 12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
-    .modal-body{ padding:12px; min-height:180px; display:grid; place-items:center; }
-    .closeBtn{ background:transparent; border:1px solid var(--border); color:var(--text); padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:800; }
-
-    /* mobilon a layout szűkítése */
-    @media (max-width:700px){
-      .center{ padding:20px; }
-      #homeView .searchBox{ padding:6px; }
-      .card{ border-radius:12px; }
+    .overlay.show{display:flex}
+    .adbox{
+      background:#111;
+      padding:12px;
+      border-radius:12px;
     }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
+<div class="wrap">
 
-    <div class="topbar">
-      <div class="logo"><span>ggg</span></div>
-    </div>
+  <div class="logo"><span>ggg</span></div>
 
-    <!-- HOME / KERESŐ NÉZET -->
-    <section id="homeView" class="card center">
-      <div class="searchBox">
-        <h2>Keresd a videót</h2>
-        <input id="searchInput" placeholder="Írj be egy címet, pl. grú, minyon..." autocomplete="off" />
-        <ul id="results"></ul>
-        <div style="color:var(--muted); font-size:13px; padding-top:8px;">Kattints a találatra, hogy megnyíljon és elinduljon.</div>
-      </div>
-    </section>
-
-    <!-- PLAYER NÉZET (alapból rejtve) -->
-    <section id="playerView" class="card">
-      <div class="videoCard">
-        <div class="metaRow">
-          <div class="metaLeft">
-            <button class="backBtn" id="backBtn">← Vissza</button>
-            <span style="display:inline-block; width:12px;"></span>
-            <b id="videoTitle">Videó címe</b>
-          </div>
-          <div class="metaRight">
-            <small id="views">0 megtekintés</small>
-          </div>
-        </div>
-
-        <div id="videoContainer">
-          <video id="player" controls playsinline preload="metadata">
-            <source id="videoSource" src="" type="video/mp4">
-            A böngésződ nem támogatja a videó lejátszást.
-          </video>
-
-          <!-- Letöltés gomb, csak hover/touch esetén látszik -->
-          <a id="downloadBtn" class="download" href="#" download>⬇ Letöltés</a>
-        </div>
-      </div>
-    </section>
-
+  <!-- FŐOLDAL -->
+  <div id="home" class="card">
+    <input id="searchInput" placeholder="Keresés..." />
+    <div id="results"></div>
   </div>
 
-  <!-- REKLÁM OVERLAY -->
-  <div id="overlay" class="overlay" role="dialog" aria-modal="true">
-    <div class="modal">
-      <div class="modal-head">
-        <b>Hirdetés</b>
-        <button class="closeBtn" id="closeAd">✕</button>
-      </div>
-      <div class="modal-body">
-        <div id="overlayAd" style="width:100%; text-align:center;">
-          <!-- A te reklám szkripted (egyszer) -->
-          <script src="https://pl28566218.effectivegatecpm.com/a0/43/e3/a043e350c28e267428053c9ac9bc1f76.js"></script>
-        </div>
-      </div>
+  <!-- LEJÁTSZÓ -->
+  <div id="playerView" class="card">
+    <div class="back" id="backBtn">← Vissza</div>
+
+    <div id="videoContainer">
+      <video id="player" controls autoplay playsinline>
+        <source id="videoSrc" type="video/mp4">
+      </video>
+      <a id="downloadBtn" download>⬇ Letöltés</a>
     </div>
   </div>
+
+</div>
+
+<!-- REKLÁM -->
+<div id="overlay" class="overlay">
+  <div class="adbox">
+    <script src="https://pl28566218.effectivegatecpm.com/a0/43/e3/a043e350c28e267428053c9ac9bc1f76.js"></script>
+  </div>
+</div>
 
 <script>
-  /***** Videók lista: ide add hozzá a videóidat (id, cím, url) *****/
-  const VIDEOS = [
-    {
-      id: "dropbox-video",
-      title: "Video (Dropbox feltöltés)",
-      url: "https://dl.dropboxusercontent.com/scl/fi/uecgt6mva6l51or9ovqft/video.mp4?rlkey=qbmtoecx4s7fjc2ozj8r96hv0&st=keld91um"
-    },
-    // { id:"grú1", title:"Grú 1", url: "https://..." },
-    // { id:"minyonok", title:"Minyonok", url: "https://..." }
-  ];
+  const VIDEO = {
+    title: "Video",
+    url: "https://dl.dropboxusercontent.com/scl/fi/uecgt6mva6l51or9ovqft/video.mp4?rlkey=qbmtoecx4s7fjc2ozj8r96hv0&st=d4tm9f0e"
+  };
 
-  // DOM elemek
-  const searchInput = document.getElementById('searchInput');
-  const results = document.getElementById('results');
-  const homeView = document.getElementById('homeView');
+  const home = document.getElementById('home');
   const playerView = document.getElementById('playerView');
-  const videoTitle = document.getElementById('videoTitle');
+  const results = document.getElementById('results');
+  const searchInput = document.getElementById('searchInput');
   const player = document.getElementById('player');
-  const videoSource = document.getElementById('videoSource');
+  const videoSrc = document.getElementById('videoSrc');
   const downloadBtn = document.getElementById('downloadBtn');
   const backBtn = document.getElementById('backBtn');
-  const videoContainer = document.getElementById('videoContainer');
   const overlay = document.getElementById('overlay');
-  const closeAd = document.getElementById('closeAd');
+  const videoContainer = document.getElementById('videoContainer');
 
-  // Reklám megjelenítési logika:
-  // Biztonsági és használhatósági okokból a reklámot az első felhasználói kattintásra + videó lejátszáskor 1x jelenítjük meg.
-  let adShownOnce = false;
+  let adShown = false;
   function showAd(){
+    if(adShown) return;
+    adShown = true;
     overlay.classList.add('show');
-  }
-  function tryShowAdOnce(){
-    if(adShownOnce) return;
-    adShownOnce = true;
-    showAd();
-  }
-  // első kattintásra megjelenítés (lényeges: csak egyszer)
-  document.addEventListener('click', () => { tryShowAdOnce(); }, { once: true });
-
-  closeAd.addEventListener('click', () => overlay.classList.remove('show'));
-  overlay.addEventListener('click', (e) => { if(e.target === overlay) overlay.classList.remove('show'); });
-
-  // Kereső: találatok kirajzolása
-  function renderResults(q = ""){
-    results.innerHTML = "";
-    const term = q.trim().toLowerCase();
-    if(!term) return;
-    const matches = VIDEOS.filter(v => v.title.toLowerCase().includes(term));
-    matches.forEach(v => {
-      const li = document.createElement('li');
-      li.className = 'resultItem';
-      li.innerHTML = `<div><b>${escapeHtml(v.title)}</b><div><small>MP4</small></div></div><div style="opacity:.9">${v.id}</div>`;
-      li.addEventListener('click', () => {
-        openPlayer(v);
-      });
-      results.appendChild(li);
-    });
-    if(matches.length === 0){
-      const li = document.createElement('li');
-      li.className = 'resultItem';
-      li.style.justifyContent = 'center';
-      li.textContent = 'Nincs találat.';
-      results.appendChild(li);
-    }
+    overlay.onclick = ()=>overlay.classList.remove('show');
   }
 
-  // segédfüggvény: escape HTML
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, (m)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
-  }
-
-  // Keresés beviteli esemény
-  searchInput.addEventListener('input', (e) => {
-    renderResults(e.target.value);
+  searchInput.addEventListener('input',()=>{
+    results.innerHTML='';
+    if(!searchInput.value) return;
+    const div=document.createElement('div');
+    div.className='result';
+    div.textContent=VIDEO.title;
+    div.onclick=()=>{
+      home.style.display='none';
+      playerView.style.display='block';
+      videoSrc.src=VIDEO.url;
+      downloadBtn.href=VIDEO.url;
+      player.load();
+      player.play();
+      showAd();
+    };
+    results.appendChild(div);
   });
 
-  // Megnyitja a lejátszó nézetet és betölti a videót
-  function openPlayer(videoObj){
-    // állítsd be a címeket, forrást, letöltést
-    videoTitle.textContent = videoObj.title;
-    videoSource.src = videoObj.url;
-    downloadBtn.href = videoObj.url;
-    // megjelenít / elrejt
-    homeView.style.display = 'none';
-    playerView.style.display = 'block';
-    // betöltjük és elindítjuk a videót
-    player.load();
-    // Ha a felhasználó már letett/engedélyezett interakciót, play hívjunk:
-    // próbáljuk meghívni a play()-t; ha autoplay blokkolva van, akkor a user kattintáskor indul.
-    player.play().catch(()=>{ /* autoplay letiltva — a user kattintással tudja indítani */ });
-
-    // a videó lejátszáskor (első alkalommal) mutassuk a reklámot is, ha még nem volt
-    player.addEventListener('play', () => {
-      tryShowAdOnce();
-    }, { once: true });
-
-    // mobil: ha érintik a videót, akkor a letöltés gombot toggle-oljuk
-    player.addEventListener('touchstart', () => {
-      videoContainer.classList.toggle('touch-visible');
-    });
-  }
-
-  // Vissza home
-  backBtn.addEventListener('click', () => {
-    // állapot visszaállítása
+  backBtn.onclick=()=>{
     player.pause();
-    videoSource.src = "";
-    player.load();
-    playerView.style.display = 'none';
-    homeView.style.display = 'flex';
-    results.innerHTML = '';
-    searchInput.value = '';
+    home.style.display='block';
+    playerView.style.display='none';
+    searchInput.value='';
+    results.innerHTML='';
+  };
+
+  videoContainer.addEventListener('touchstart',()=>{
+    videoContainer.classList.toggle('touch');
   });
 
-  // Ha a felhasználó a címkére (enter) nyom, keres
-  searchInput.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter'){
-      renderResults(searchInput.value);
-    }
-  });
-
-  // Indulásnál ne legyen semmi feltöltve — csak a kereső
-  homeView.style.display = 'flex';
-  playerView.style.display = 'none';
-
-  // (opcionális) első példa: ha szeretnéd, betölthetünk automatikusan az első videót:
-  // openPlayer(VIDEOS[0]);
-
+  document.addEventListener('click',showAd,{once:true});
 </script>
+
 </body>
 </html>
