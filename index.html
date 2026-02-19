@@ -88,7 +88,6 @@
       font-weight:800;
     }
 
-    /* reklám */
     .overlay{
       position:fixed;
       inset:0;
@@ -141,7 +140,7 @@
 
 <script>
   const VIDEO = {
-    title: "grú 1",
+    title: "Grú 1",
     url: "https://dl.dropboxusercontent.com/scl/fi/uecgt6mva6l51or9ovqft/video.mp4?rlkey=qbmtoecx4s7fjc2ozj8r96hv0&st=d4tm9f0e"
   };
 
@@ -156,29 +155,39 @@
   const overlay = document.getElementById('overlay');
   const videoContainer = document.getElementById('videoContainer');
 
-  let adShown = false;
   function showAd(){
-    if(adShown) return;
-    adShown = true;
     overlay.classList.add('show');
     overlay.onclick = ()=>overlay.classList.remove('show');
   }
 
+  /* 1️⃣ Első kattintáskor */
+  document.addEventListener('click', function firstClick(){
+    showAd();
+    document.removeEventListener('click', firstClick);
+  });
+
   searchInput.addEventListener('input',()=>{
     results.innerHTML='';
     if(!searchInput.value) return;
+
     const div=document.createElement('div');
     div.className='result';
     div.textContent=VIDEO.title;
+
     div.onclick=()=>{
       home.style.display='none';
       playerView.style.display='block';
+
       videoSrc.src=VIDEO.url;
       downloadBtn.href=VIDEO.url;
+
       player.load();
       player.play();
+
+      /* 2️⃣ Minden videó indításkor */
       showAd();
     };
+
     results.appendChild(div);
   });
 
@@ -188,13 +197,15 @@
     playerView.style.display='none';
     searchInput.value='';
     results.innerHTML='';
+
+    /* 3️⃣ Minden visszalépéskor */
+    showAd();
   };
 
   videoContainer.addEventListener('touchstart',()=>{
     videoContainer.classList.toggle('touch');
   });
 
-  document.addEventListener('click',showAd,{once:true});
 </script>
 
 </body>
