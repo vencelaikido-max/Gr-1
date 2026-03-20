@@ -133,9 +133,7 @@
 
 <!-- REKLÁM -->
 <div id="overlay" class="overlay">
-  <div class="adbox">
-    <script src="https://pl28566218.effectivegatecpm.com/a0/43/e3/a043e350c28e267428053c9ac9bc1f76.js"></script>
-  </div>
+  <div class="adbox"></div>
 </div>
 
 <script>
@@ -163,10 +161,19 @@
 
   function showAd(){
     overlay.classList.add('show');
+
+    const adbox = overlay.querySelector('.adbox');
+    adbox.innerHTML = "";
+
+    const script = document.createElement("script");
+    script.src = "https://pl28566218.effectivegatecpm.com/a0/43/e3/a043e350c28e267428053c9ac9bc1f76.js";
+
+    adbox.appendChild(script);
+
     overlay.onclick = ()=>overlay.classList.remove('show');
   }
 
-  /* 🔥 Reklám minden kereső kattintásra */
+  /* Reklám minden kereső kattintásra */
   searchInput.addEventListener('click', showAd);
   searchInput.addEventListener('focus', showAd);
 
