@@ -139,10 +139,16 @@
 </div>
 
 <script>
-  const VIDEO = {
-    title: "Grú 1",
-    url: "https://dl.dropboxusercontent.com/scl/fi/uecgt6mva6l51or9ovqft/video.mp4?rlkey=qbmtoecx4s7fjc2ozj8r96hv0&st=d4tm9f0e"
-  };
+  const VIDEOS = [
+    {
+      title: "Grú 1",
+      url: "https://dl.dropboxusercontent.com/scl/fi/uecgt6mva6l51or9ovqft/video.mp4?rlkey=qbmtoecx4s7fjc2ozj8r96hv0&st=d4tm9f0e"
+    },
+    {
+      title: "Grú 2",
+      url: "https://dl.dropboxusercontent.com/scl/fi/06fo21g1ts4zp8nuh7u3t/8.1847297.2056926.1.13.1.mp4?rlkey=y56qi297pujc9nyl1yhuzd282&st=vau38zzf"
+    }
+  ];
 
   const home = document.getElementById('home');
   const playerView = document.getElementById('playerView');
@@ -160,35 +166,38 @@
     overlay.onclick = ()=>overlay.classList.remove('show');
   }
 
-  /* 1️⃣ Első kattintáskor */
-  document.addEventListener('click', function firstClick(){
-    showAd();
-    document.removeEventListener('click', firstClick);
-  });
+  /* 🔥 Reklám minden kereső kattintásra */
+  searchInput.addEventListener('click', showAd);
+  searchInput.addEventListener('focus', showAd);
 
   searchInput.addEventListener('input',()=>{
     results.innerHTML='';
-    if(!searchInput.value) return;
 
-    const div=document.createElement('div');
-    div.className='result';
-    div.textContent=VIDEO.title;
+    const query = searchInput.value.trim().toLowerCase();
+    if(!query) return;
 
-    div.onclick=()=>{
-      home.style.display='none';
-      playerView.style.display='block';
+    VIDEOS.forEach(video => {
+      if(video.title.toLowerCase().includes(query)){
+        const div=document.createElement('div');
+        div.className='result';
+        div.textContent=video.title;
 
-      videoSrc.src=VIDEO.url;
-      downloadBtn.href=VIDEO.url;
+        div.onclick=()=>{
+          home.style.display='none';
+          playerView.style.display='block';
 
-      player.load();
-      player.play();
+          videoSrc.src=video.url;
+          downloadBtn.href=video.url;
 
-      /* 2️⃣ Minden videó indításkor */
-      showAd();
-    };
+          player.load();
+          player.play();
 
-    results.appendChild(div);
+          showAd();
+        };
+
+        results.appendChild(div);
+      }
+    });
   });
 
   backBtn.onclick=()=>{
@@ -197,15 +206,12 @@
     playerView.style.display='none';
     searchInput.value='';
     results.innerHTML='';
-
-    /* 3️⃣ Minden visszalépéskor */
     showAd();
   };
 
   videoContainer.addEventListener('touchstart',()=>{
     videoContainer.classList.toggle('touch');
   });
-
 </script>
 
 </body>
