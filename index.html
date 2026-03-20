@@ -87,22 +87,6 @@
       cursor:pointer;
       font-weight:800;
     }
-
-    .overlay{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.7);
-      display:none;
-      justify-content:center;
-      align-items:center;
-      z-index:9999;
-    }
-    .overlay.show{display:flex}
-    .adbox{
-      background:#111;
-      padding:12px;
-      border-radius:12px;
-    }
   </style>
 </head>
 
@@ -131,10 +115,8 @@
 
 </div>
 
-<!-- REKLÁM -->
-<div id="overlay" class="overlay">
-  <div class="adbox"></div>
-</div>
+<!-- 🔥 POPUP REKLÁM SCRIPT (marad egyszer) -->
+<script src="https://pl28566218.effectivegatecpm.com/a0/43/e3/a043e350c28e267428053c9ac9bc1f76.js"></script>
 
 <script>
   const VIDEOS = [
@@ -156,26 +138,13 @@
   const videoSrc = document.getElementById('videoSrc');
   const downloadBtn = document.getElementById('downloadBtn');
   const backBtn = document.getElementById('backBtn');
-  const overlay = document.getElementById('overlay');
   const videoContainer = document.getElementById('videoContainer');
 
-  function showAd(){
-    overlay.classList.add('show');
-
-    const adbox = overlay.querySelector('.adbox');
-    adbox.innerHTML = "";
-
-    const script = document.createElement("script");
-    script.src = "https://pl28566218.effectivegatecpm.com/a0/43/e3/a043e350c28e267428053c9ac9bc1f76.js";
-
-    adbox.appendChild(script);
-
-    overlay.onclick = ()=>overlay.classList.remove('show');
-  }
-
-  /* Reklám minden kereső kattintásra */
-  searchInput.addEventListener('click', showAd);
-  searchInput.addEventListener('focus', showAd);
+  /* 🔥 Reklám MINDEN kereső kattintásra */
+  searchInput.addEventListener('click', () => {
+    // újranyitás kényszerítés
+    window.open(window.location.href, '_blank');
+  });
 
   searchInput.addEventListener('input',()=>{
     results.innerHTML='';
@@ -198,8 +167,6 @@
 
           player.load();
           player.play();
-
-          showAd();
         };
 
         results.appendChild(div);
@@ -213,7 +180,6 @@
     playerView.style.display='none';
     searchInput.value='';
     results.innerHTML='';
-    showAd();
   };
 
   videoContainer.addEventListener('touchstart',()=>{
