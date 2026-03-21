@@ -140,11 +140,6 @@
   const backBtn = document.getElementById('backBtn');
   const videoContainer = document.getElementById('videoContainer');
 
-  /* 🔥 Reklám minden kereső kattintásra */
-  searchInput.addEventListener('click', () => {
-    window.open(window.location.href, '_blank');
-  });
-
   searchInput.addEventListener('input',()=>{
     results.innerHTML='';
 
