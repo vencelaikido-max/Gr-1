@@ -3,89 +3,142 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ggg filmek</title>
+  <title>Videó kereső + lejátszó</title>
 
   <style>
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      background:#0f0f10;
-      color:#fff;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:24px;
+    * { box-sizing: border-box; }
+    
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      background: #0f0f10;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px;
     }
-    .wrap{max-width:900px;width:100%}
-
-    .logo span{
-      background:#ff2d55;
-      padding:6px 14px;
-      border-radius:999px;
-      font-weight:900;
+    
+    .wrap {
+      max-width: 900px;
+      width: 100%;
     }
 
-    .card{
-      background:#1a1b1e;
-      border-radius:14px;
-      padding:24px;
-      margin-top:14px;
+    .logo span {
+      background: #ff2d55;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 900;
+      display: inline-block;
+      margin-bottom: 20px;
     }
 
-    #searchInput{
-      width:100%;
-      padding:14px;
-      border-radius:12px;
-      border:none;
-      font-size:16px;
-      font-weight:700;
+    .card {
+      background: #1a1b1e;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
     }
 
-    .result{
-      margin-top:10px;
-      padding:12px;
-      background:#111;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:700;
+    #searchInput {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      border: 2px solid #333;
+      font-size: 16px;
+      font-weight: 700;
+      background: #25262b;
+      color: #fff;
+      outline: none;
     }
 
-    #playerView{display:none}
-
-    #videoContainer{
-      position:relative;
-      background:#000;
-      border-radius:12px;
-      overflow:hidden;
+    #searchInput:focus {
+      border-color: #ff2d55;
     }
 
-    video{width:100%;display:block}
-
-    #downloadBtn{
-      position:absolute;
-      top:10px;
-      right:10px;
-      background:rgba(0,0,0,.7);
-      padding:8px 12px;
-      border-radius:8px;
-      color:#fff;
-      text-decoration:none;
-      font-weight:800;
-      opacity:0;
-      transition:.2s;
+    .result {
+      margin-top: 12px;
+      padding: 15px;
+      background: #2c2e33;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s;
     }
 
-    #videoContainer:hover #downloadBtn,
-    #videoContainer.touch #downloadBtn{
-      opacity:1;
+    .result:hover {
+      background: #383a40;
     }
 
-    .back{
-      margin-bottom:10px;
-      cursor:pointer;
-      font-weight:800;
+    #playerView { display: none; }
+
+    /* Banner stílus */
+    .banner-300x250 {
+      width: 300px;
+      height: 250px;
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    #videoContainer {
+      position: relative;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    video {
+      width: 100%;
+      display: block;
+    }
+
+    #downloadBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, .8);
+      padding: 10px 15px;
+      border-radius: 8px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 13px;
+      opacity: 0;
+      transition: .3s;
+    }
+
+    #videoContainer:hover #downloadBtn {
+      opacity: 1;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 15px;
+      cursor: pointer;
+      font-weight: 800;
+      color: #aaa;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    
+    .overlay.show { display: flex; }
+    
+    .adbox {
+      background: #000;
+      padding: 5px;
+      border-radius: 10px;
     }
   </style>
 </head>
@@ -95,39 +148,83 @@
 
   <div class="logo"><span>ggg</span></div>
 
-  <!-- FŐOLDAL -->
-  <div id="home" class="card">
-    <input id="searchInput" placeholder="Keresés..." />
-    <div id="results"></div>
+  <div id="home">
+    <div class="card">
+      <input id="searchInput" placeholder="Keresés (pl. Grú)..." autocomplete="off" />
+      <div id="results"></div>
+    </div>
+
+    <div class="banner-300x250">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '259f2328ec6fce921143701eee6a2f17',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/259f2328ec6fce921143701eee6a2f17/invoke.js"></script>
+    </div>
   </div>
 
-  <!-- LEJÁTSZÓ -->
-  <div id="playerView" class="card">
-    <div class="back" id="backBtn">← Vissza</div>
+  <div id="playerView">
+    <div class="back" id="backBtn">← VISSZA A KERESÉSHEZ</div>
+
+    <div class="banner-300x250">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '3b7d9bfd97f0e53ee25a2bbed663eed8',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/3b7d9bfd97f0e53ee25a2bbed663eed8/invoke.js"></script>
+    </div>
 
     <div id="videoContainer">
-      <video id="player" controls autoplay playsinline>
+      <video id="player" controls playsinline>
         <source id="videoSrc" type="video/mp4">
       </video>
-      <a id="downloadBtn" download>⬇ Letöltés</a>
+      <a id="downloadBtn" download target="_blank">⬇ LETÖLTÉS</a>
+    </div>
+
+    <div class="banner-300x250">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '9577dfcd766108ceda94cf15489c49ce',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/9577dfcd766108ceda94cf15489c49ce/invoke.js"></script>
     </div>
   </div>
 
 </div>
 
-<!-- 🔥 CSAK AZ ÚJ REKLÁM -->
-<script src="https://pl28586326.profitablecpmratenetwork.com/02/63/1c/02631cfa3b9e197ffa2117e8c1084fb4.js"></script>
+<div id="overlay" class="overlay">
+  <div class="adbox" id="adContent"></div>
+</div>
 
 <script>
   const VIDEOS = [
     {
       title: "Grú 1",
-      url: "https://dl.dropboxusercontent.com/scl/fi/uecgt6mva6l51or9ovqft/video.mp4?rlkey=qbmtoecx4s7fjc2ozj8r96hv0&st=d4tm9f0e"
+      url: "https://dl.dropboxusercontent.com/scl/fi/uecgt6mva6l51or9ovqft/video.mp4?rlkey=qbmtoecx4s7fjc2ozj8r96hv0&raw=1"
     },
     {
       title: "Grú 2",
-      url: "https://dl.dropboxusercontent.com/scl/fi/06fo21g1ts4zp8nuh7u3t/8.1847297.2056926.1.13.1.mp4?rlkey=y56qi297pujc9nyl1yhuzd282&st=vau38zzf"
-    }
+      url: "https://dl.dropboxusercontent.com/scl/fi/06fo21g1ts4zp8nuh7u3t/8.1847297.2056926.1.13.1.mp4?rlkey=y56qi297pujc9nyl1yhuzd282&raw=1"
+    },
+   {
+     title: "Grú 3",
+     url: "https://videa.hu/player?v=ZDPNU8FfZyMGr4gF" 
+    } 
   ];
 
   const home = document.getElementById('home');
@@ -138,47 +235,52 @@
   const videoSrc = document.getElementById('videoSrc');
   const downloadBtn = document.getElementById('downloadBtn');
   const backBtn = document.getElementById('backBtn');
-  const videoContainer = document.getElementById('videoContainer');
+  const overlay = document.getElementById('overlay');
+  const adContent = document.getElementById('adContent');
 
-  searchInput.addEventListener('input',()=>{
-    results.innerHTML='';
+  function showAd() {
+    overlay.classList.add('show');
+    adContent.innerHTML = "";
+    const script = document.createElement("script");
+    script.src = "https://pl28566218.effectivegatecpm.com/a0/43/e3/a043e350c28e267428053c9ac9bc1f76.js?rnd=" + Math.random();
+    adContent.appendChild(script);
+    overlay.onclick = () => overlay.classList.remove('show');
+  }
 
+  searchInput.addEventListener('input', () => {
     const query = searchInput.value.trim().toLowerCase();
-    if(!query) return;
+    results.innerHTML = '';
 
-    VIDEOS.forEach(video => {
-      if(video.title.toLowerCase().includes(query)){
-        const div=document.createElement('div');
-        div.className='result';
-        div.textContent=video.title;
+    if (query.length < 1) return;
 
-        div.onclick=()=>{
-          home.style.display='none';
-          playerView.style.display='block';
+    const filtered = VIDEOS.filter(v => v.title.toLowerCase().includes(query));
 
-          videoSrc.src=video.url;
-          downloadBtn.href=video.url;
+    filtered.forEach(video => {
+      const div = document.createElement('div');
+      div.className = 'result';
+      div.innerHTML = `🎬 ${video.title}`;
 
-          player.load();
-          player.play();
-        };
-
-        results.appendChild(div);
-      }
+      div.onclick = () => {
+        home.style.display = 'none';
+        playerView.style.display = 'block';
+        videoSrc.src = video.url;
+        downloadBtn.href = video.url;
+        player.load();
+        player.play();
+        showAd();
+      };
+      results.appendChild(div);
     });
   });
 
-  backBtn.onclick=()=>{
+  backBtn.onclick = () => {
     player.pause();
-    home.style.display='block';
-    playerView.style.display='none';
-    searchInput.value='';
-    results.innerHTML='';
+    playerView.style.display = 'none';
+    home.style.display = 'block';
+    searchInput.value = '';
+    results.innerHTML = '';
+    showAd();
   };
-
-  videoContainer.addEventListener('touchstart',()=>{
-    videoContainer.classList.toggle('touch');
-  });
 </script>
 
 </body>
